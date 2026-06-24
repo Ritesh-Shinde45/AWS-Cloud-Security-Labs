@@ -48,9 +48,20 @@ Ran it a few more times back to back. CloudWatch shows multiple distinct peaks a
 - **CPU Utilization:** Stayed flat (~0.37%) since SYN handling happens in kernel space, not application-level
 - **CPU Credit Balance:** Kept climbing through the test, confirming the instance was idle CPU-wise and well within Free Tier limits
 
+## An Unexpected Side Effect: My Own IP Got Blocked
+
+After the last flood attempt, which ran for about 2-3 minutes straight, the site stopped loading from the same wifi/IP I used to send the attack. Other devices on a different wifi could still open the site fine, so the instance itself wasn't down.
+
+I was using a mobile hotspot for this. Turning on airplane mode and then turning it off changed my phone's IP, and the site started loading again right after that. Since nothing changed except my IP, this means the block was tied to my IP specifically.
+
+I never set up any blocking rule myself, so this was most likely AWS Shield Standard, which runs automatically on every EC2 instance with no setup needed. It looks like it picked up on the abnormal traffic pattern from my IP and quietly blocked or limited it at the network level, without me seeing anything about it in the AWS console.
+
+This ended up being a good real-world confirmation that AWS's basic DDoS protection works on its own, even without configuring anything extra.
+
 ## Takeaways
 - Cloud servers can handle a lot more flood traffic than a local machine. My own laptop choked before AWS did, more than once.
 - A real flood can still fill up the connection table on the server and take Apache down for a while. It comes back either when the connections time out on their own, or after running `sudo systemctl restart httpd`.
+- My own attacking IP got auto-blocked after the last flood, likely by AWS Shield Standard, even though I never configured any blocking myself.
 - Ways to actually defend against this in production:
   - **AWS Shield Standard**: basic protection AWS gives you by default
   - **Security Groups / NACLs**: limit which IPs can send traffic, or rate-limit it
