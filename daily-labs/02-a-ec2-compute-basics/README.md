@@ -1,4 +1,4 @@
-# Lab 02: Learning the EC2 Service & Setting Up Cost Management Alerts
+# Lab 02 A: Learning the EC2 Service & Setting Up Cost Management Alerts
 
 ## 1. Amazon EC2 Configuration
 

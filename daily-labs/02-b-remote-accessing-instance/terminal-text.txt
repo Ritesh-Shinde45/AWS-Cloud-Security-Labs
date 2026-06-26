@@ -1,0 +1,14 @@
+Using username "ec2-user".
+Authenticating with public key "imported-openssh-key"
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Thu Jun 25 19:59:20 2026 from 106.210.159.102
+[ec2-user@ip-172-31-32-99 ~]$
