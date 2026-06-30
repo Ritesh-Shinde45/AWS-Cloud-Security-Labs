@@ -25,13 +25,21 @@ This part mattered more than I expected. Understanding why the leaks happened ma
 
 ## 4. Steps
 
-### 4.1 Creating the Bucket
+### 4.1 Opening the S3 Service
 
-Created a new S3 bucket in the `ap-south-1` region.
+Started from the Amazon S3 landing page and clicked Create bucket to begin setup.
 
-### 4.2 Enabling Block All Public Access
+![S3 home page](./01-s3-home-create-bucket.png)
 
-Made sure all four Block Public Access settings were checked during bucket creation:
+### 4.2 Naming the Bucket
+
+Entered a unique bucket name prefix while keeping the region set to Asia Pacific (Mumbai). AWS automatically appends a suffix to the prefix to keep the bucket name unique account wide.
+
+![Bucket name configuration](./02-bucket-name-config.png)
+
+### 4.3 Enabling Block All Public Access
+
+Kept Object Ownership set to ACLs disabled and made sure all four Block Public Access settings were checked:
 
 * Block public access through new ACLs
 * Block public access through any ACLs
@@ -40,9 +48,37 @@ Made sure all four Block Public Access settings were checked during bucket creat
 
 This keeps the bucket private by default, no public reads or writes, even if a policy or ACL gets misconfigured later.
 
-### 4.3 Uploading a Test Asset
+![Block public access settings](./03-block-public-access.png)
 
-Uploaded a test file into the bucket to confirm everything works.
+### 4.4 Versioning, Tags and Encryption
+
+Enabled Bucket Versioning so older versions of an object can be recovered if something gets overwritten or deleted by mistake. Left tags empty since they were not needed for this lab. Kept default encryption set to Server-side encryption with Amazon S3 managed keys (SSE-S3).
+
+![Versioning tags and encryption](./04-versioning-tags-encryption.png)
+
+### 4.5 Reviewing Encryption and Advanced Settings
+
+Confirmed the encryption type once more along with the Bucket Key setting, and left Object Lock disabled since it was not needed for this test bucket. Clicked Create bucket to finish setup.
+
+![Encryption and advanced settings](./05-encryption-advanced-settings.png)
+
+### 4.6 Bucket Created
+
+The bucket was created successfully and showed an empty objects list, confirming everything was set up correctly so far.
+
+![Bucket created successfully](./06-bucket-created-success.png)
+
+### 4.7 Uploading a Test File
+
+Uploaded a simple `index.html` file into the bucket to use as a test object.
+
+![Upload index.html](./07-upload-index-html.png)
+
+### 4.8 Confirming the Upload
+
+After the upload completed, the objects list showed `index.html` sitting inside the bucket.
+
+![Object uploaded successfully](./08-object-uploaded-final.png)
 
 ---
 
