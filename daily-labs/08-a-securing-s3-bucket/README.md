@@ -22,37 +22,43 @@ There were two main parts to this lab. First I created a new KMS key. Then I wen
 
 ## 4. Steps
 
-### 4.1 Configuring the Key Type
+### 4.1 Opening Bucket Encryption Settings
 
-Opened AWS KMS and started the Create key flow. Selected **Symmetric** as the key type since this key will be used for both encrypting and decrypting data inside the same account. Set the key usage to **Encrypt and decrypt**. Left the key material origin as **KMS** which means AWS generates and manages the key material internally.
+Went into the S3 bucket, opened the **Properties** tab, scrolled down to **Default encryption** and clicked **Edit**. Changed the encryption type from SSE-S3 to **SSE-KMS**. At this point I had no KMS key created yet so the key dropdown was empty. This is where I decided to create a new key.
 
-![Configure key type](./01-kms-configure-key.png)
+![S3 edit encryption - SSE-KMS selected](./01-s3-edit-encryption.png)
 
-### 4.2 Adding Labels
+### 4.2 Creating a New KMS Key - Configure Key
 
-Gave the key an alias of `demo-key` and added a short description to make it easy to identify later. Left tags empty since this was a learning exercise.
+Clicked the **Create a KMS key** button which opened the KMS console in a new tab. On the first step, selected **Symmetric** as the key type since this key will be used for both encrypting and decrypting data inside the same account. Set key usage to **Encrypt and decrypt** and left the key material origin as **KMS** so AWS generates and manages the key material internally.
 
-![Add labels and description](./02-kms-add-labels.png)
+![KMS configure key](./02-kms-configure-key.png)
 
-### 4.3 Setting Key Administrative Permissions
+### 4.3 Adding Labels
 
-In the key administrators section, selected the IAM user `suraj`. A key administrator can manage the key itself, things like enabling, disabling, rotating and deleting it, but this does not automatically mean they can use the key to encrypt or decrypt data. That is a separate permission.
+Gave the key an alias of `demo-key` and added a short description. Left tags empty since this was a learning exercise.
 
-![Key administrative permissions](./03-kms-key-admin-permissions.png)
+![KMS add labels](./03-kms-add-labels.png)
 
-### 4.4 Setting Key Usage Permissions
+### 4.4 Setting Key Administrative Permissions
 
-In the key users section, also selected `suraj`. This allows the user to actually use the key in cryptographic operations like encrypt, decrypt and generate data keys. Both admin and usage permissions were given to the same user here for simplicity in this lab.
+Selected the IAM user `suraj` as the key administrator. A key administrator can manage the key itself, things like enabling, disabling, rotating and deleting it. This does not automatically mean they can use the key to encrypt or decrypt data since that is a separate permission set.
 
-![Key usage permissions](./04-kms-key-usage-permissions.png)
+![KMS key admin permissions](./04-kms-key-admin-permissions.png)
 
-### 4.5 Reviewing the Key Policy
+### 4.5 Setting Key Usage Permissions
+
+Also selected `suraj` as the key user. This allows the user to actually use the key in cryptographic operations like encrypt, decrypt and generate data keys. Both admin and usage permissions were given to the same user here for simplicity in this lab.
+
+![KMS key usage permissions](./05-kms-key-usage-permissions.png)
+
+### 4.6 Reviewing the Key Policy
 
 Before finishing, reviewed the auto-generated key policy JSON. The policy has four statements:
 
 * **Enable IAM User Permissions** - gives the root account full control over the key as a fallback
 * **Allow access for Key Administrators** - gives `suraj` permissions to manage the key lifecycle
-* **Allow use of the key** - gives `suraj` permission to use the key for encryption and decryption operations
+* **Allow use of the key** - gives `suraj` permission to use the key for encryption and decryption
 * **Allow attachment of persistent resources** - lets `suraj` create grants so AWS services like S3 can use the key on their own
 
 ```json
@@ -131,21 +137,15 @@ Before finishing, reviewed the auto-generated key policy JSON. The policy has fo
 }
 ```
 
-![Edit key policy](./05-kms-edit-key-policy.png)
+![KMS edit key policy](./06-kms-edit-key-policy.png)
 
-### 4.6 Changing the S3 Bucket Default Encryption
+### 4.7 Applying the Key to the Bucket
 
-Went into the S3 bucket settings and opened Edit default encryption. Changed the encryption type from SSE-S3 to **SSE-KMS**. This means instead of S3 managing the key on its own, the key lives in KMS and S3 asks KMS to handle encryption and decryption for every object.
+Came back to the S3 Edit default encryption page. The `demo-key` now showed up in the available KMS keys dropdown. Selected it and saved the changes. Also noticed the console automatically checked **Block SSE-C** at the bottom which is a good security practice since SSE-C lets users bring their own keys from outside AWS which is harder to audit and control.
 
-Also noticed that once SSE-KMS is selected, the console automatically checks the **Block SSE-C** option at the bottom. This is a good security practice since SSE-C lets users bring their own keys from outside AWS which is harder to audit and control.
+From this point every new object uploaded to the bucket will be encrypted using `demo-key` automatically without needing to do anything extra during upload.
 
-![Edit default encryption - select SSE-KMS](./06-s3-edit-encryption-select-sse-kms.png)
-
-### 4.7 Selecting the KMS Key
-
-Selected `demo-key` from the available KMS keys dropdown and saved the changes. From this point every new object uploaded to the bucket will be encrypted using this key automatically without needing to do anything extra during upload.
-
-![Demo key applied to bucket encryption](./07-s3-encryption-demo-key-applied.png)
+![S3 encryption demo-key applied](./07-key-applied.png)
 
 ---
 
