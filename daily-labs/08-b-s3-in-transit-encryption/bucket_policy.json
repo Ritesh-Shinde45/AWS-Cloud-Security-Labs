@@ -1,0 +1,27 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPublicRead",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::demo-s3-bucket-908875503206-ap-south-1-an/*"
+        },
+        {
+            "Sid": "EnforceHTTPSOnly",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::demo-s3-bucket-908875503206-ap-south-1-an",
+                "arn:aws:s3:::demo-s3-bucket-908875503206-ap-south-1-an/*"
+            ],
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": "false"
+                }
+            }
+        }
+    ]
+}
